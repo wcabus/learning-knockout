@@ -7,7 +7,24 @@
 	<body>
 		<div class="container">
 			<h1>Learning Knockout</h1>
-			<h2>Step 1</h2>
+			<table class="table table-hover table-striped">
+				<thead>
+					<tr>
+						<th>Title</th>
+						<th>Genre</th>
+						<th>Duration</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody data-bind="foreach: movies">
+					<tr>
+						<td data-bind="text: title"></td>
+						<td data-bind="text: genre"></td>
+						<td data-bind="text: durationFormatted"></td>
+						<td><button class="btn btn-default" title="Edit" data-bind="click: edit"><i class="glyphicon glyphicon-pencil"></i></button></td>
+					</tr>
+				</tbody>
+			</table>
 			<div class="row">
 				<form>
 					<div class="form-horizontal">
@@ -15,6 +32,12 @@
 							<label class="col-md-2 control-label">Movie Title</label>
 							<div class="col-md-5">
 								<input type="text" data-bind="value: title" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-md-2 control-label">Genre</label>
+							<div class="col-md-5">
+								<input type="text" data-bind="value: genre" />
 							</div>
 						</div>
 						<div class="form-group">
@@ -26,34 +49,31 @@
 					</div>
 				</form>
 			</div>
-			<div class="row" data-bind="visible: showPreview">
-				<h3>Preview</h3>
-				<h4 data-bind="text: title"></h4>
-				<strong>Duration: </strong><span data-bind="text: durationFormatted"></span>
-			</div>
 		</div>
 		<script src="js/knockout.js"></script>
 		<script>
-			function ViewModel() {
-				var self = this;
+			function Movie() {
+				this.title = ko.observable();
+				this.duration = ko.observable();
+				this.genre = ko.observable();
 
-				self.title = ko.observable('');
-				self.duration = ko.observable();
-
-				self.durationFormatted = ko.computed(function() {
-					if (self.duration()) {
-						var hours = Math.round(self.duration() / 60);
-						var minutes = self.duration() % 60;
+				this.durationFormatted = ko.computed(function() {
+					if (this.duration()) {
+						var hours = Math.round(this.duration() / 60);
+						var minutes = this.duration() % 60;
 
 						return hours + ' hours and ' + minutes + ' minutes';
 					}
 
 					return '0 minutes';
-				});
+				}, this);
+			}
 
-				self.showPreview = ko.computed(function() {
-					return self.title() !== '';
-				});
+			function ViewModel() {
+				var self = this;
+
+				this.movies = ko.observableArray();
+				this.editor = ko.obervable(null);
 			}
 
 			ko.applyBindings(new ViewModel());

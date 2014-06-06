@@ -6,16 +6,28 @@
 	</head>
 	<body>
 		<div class="container">
-			<div class="row">
-				
-			</div>
+			<h3>hasFocus binding example</h3>
+			<p>
+				Movie title:
+				<b data-bind="visible: !editing(), text: title, click: edit"></b>
+				<input data-bind="visible: editing, value: title, hasFocus: editing" />
+			</p>
+			<p class="help-block">
+				Click the title to edit it, and somewhere else to apply the changes.
+			</p>
 		</div>
 		<script src="js/knockout.js"></script>
 		<script>
 			function ViewModel() {
 				var self = this;
 
-				
+				self.title = ko.observable('Godzilla');
+
+				self.editing = ko.observable(false);
+
+				self.edit = function() {
+					self.editing(true);
+				};
 			}
 
 			ko.applyBindings(new ViewModel());

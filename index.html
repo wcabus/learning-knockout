@@ -7,14 +7,37 @@
 	<body>
 		<div class="container">
 			<h1>Learning Knockout</h1>
-			<h2>Step 1</h2>
-			<div class="row">
-				<form>
+			<table class="table table-hover table-striped">
+				<thead>
+					<tr>
+						<th>Title</th>
+						<th>Genre</th>
+						<th>Duration</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody data-bind="foreach: movies">
+					<tr>
+						<td data-bind="text: title"></td>
+						<td data-bind="text: genre"></td>
+						<td data-bind="text: durationFormatted"></td>
+						<td><button class="btn btn-default" title="Edit" data-bind="click: $parent.edit"><i class="glyphicon glyphicon-pencil"></i></button></td>
+					</tr>
+				</tbody>
+			</table>
+			<div class="row" data-bind="visible: showEditor">
+				<form data-bind="with: editor">
 					<div class="form-horizontal">
 						<div class="form-group">
 							<label class="col-md-2 control-label">Movie Title</label>
 							<div class="col-md-5">
 								<input type="text" data-bind="value: title" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-md-2 control-label">Genre</label>
+							<div class="col-md-5">
+								<input type="text" data-bind="value: genre" />
 							</div>
 						</div>
 						<div class="form-group">
@@ -26,37 +49,73 @@
 					</div>
 				</form>
 			</div>
-			<div class="row" data-bind="visible: showPreview">
-				<h3>Preview</h3>
-				<h4 data-bind="text: title"></h4>
-				<strong>Duration: </strong><span data-bind="text: durationFormatted"></span>
-			</div>
 		</div>
 		<script src="js/knockout.js"></script>
 		<script>
-			function ViewModel() {
-				var self = this;
+			function Movie() {
+				this.title = ko.observable();
+				this.duration = ko.observable();
+				this.genre = ko.observable();
 
-				self.title = ko.observable('');
-				self.duration = ko.observable();
+				this.durationFormatted = ko.computed(function() {
+					if (this.duration()) {
+						var minutes = this.duration() % 60;
+						var hours = (this.duration() - minutes) / 60;
 
-				self.durationFormatted = ko.computed(function() {
-					if (self.duration()) {
-						var hours = Math.round(self.duration() / 60);
-						var minutes = self.duration() % 60;
-
-						return hours + ' hours and ' + minutes + ' minutes';
+						if (hours < 10) {
+							hours = '0' + hours;
+						}
+						if (minutes < 10) {
+							minutes = '0' + minutes;
+						}
+						return hours + ':' + minutes;
 					}
 
 					return '0 minutes';
-				});
-
-				self.showPreview = ko.computed(function() {
-					return self.title() !== '';
-				});
+				}, this);
 			}
 
-			ko.applyBindings(new ViewModel());
+			function ViewModel() {
+				var self = this;
+
+				this.movies = ko.observableArray();
+				this.editor = ko.observable(null);
+
+				this.showEditor = ko.computed(function() {
+					return self.editor() !== null;
+				});
+
+				this.edit = function() {};
+			}
+
+
+			var vm = new ViewModel();
+			ko.applyBindings(vm);
+
+			//Let's add some data to begin with
+			var movie = new Movie();
+			movie.title('Maleficent');
+			movie.genre('Action, adventure, family');
+			movie.duration(97);
+			vm.movies.push(movie);
+
+			movie = new Movie();
+			movie.title('X-Men: Days of Future Past');
+			movie.genre('Action, adventure, sci-fi');
+			movie.duration(131);
+			vm.movies.push(movie);
+
+			movie = new Movie();
+			movie.title('A Million Ways to Die in the West');
+			movie.genre('Comedy, western');
+			movie.duration(116);
+			vm.movies.push(movie);
+
+			movie = new Movie();
+			movie.title('Godzilla');
+			movie.genre('Action, sci-fi, thriller');
+			movie.duration(123);
+			vm.movies.push(movie);
 		</script>
 	</body>
 </html>

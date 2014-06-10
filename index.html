@@ -6,21 +6,20 @@
 	</head>
 	<body>
 		<div class="container">
-			<h1>Learning Knockout</h1>
-			<h2>Step 1</h2>
 			<div class="row">
+				<h1>Learning Knockout</h1>
 				<form>
 					<div class="form-horizontal">
 						<div class="form-group">
 							<label class="col-md-2 control-label">Movie Title</label>
 							<div class="col-md-5">
-								<input type="text" data-bind="value: title" />
+								<input class="form-control" data-bind="value: title" />
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-md-2 control-label">Duration</label>
-							<div class="col-md-5">
-								<input type="number" min="0" max="999" data-bind="value: duration" />
+							<div class="col-md-2">
+								<input class="form-control" type="number" min="0" max="999" data-bind="value: duration" />
 							</div>
 						</div>
 					</div>
@@ -28,7 +27,7 @@
 			</div>
 			<div class="row" data-bind="visible: showPreview">
 				<h3>Preview</h3>
-				<h4 data-bind="text: title"></h4>
+				<h4 data-bind="text: title, style: { color: titleStyle }"></h4>
 				<strong>Duration: </strong><span data-bind="text: durationFormatted"></span>
 			</div>
 		</div>
@@ -42,17 +41,32 @@
 
 				self.durationFormatted = ko.computed(function() {
 					if (self.duration()) {
-						var hours = Math.round(self.duration() / 60);
 						var minutes = self.duration() % 60;
+						var hours = (self.duration() - minutes) / 60;
 
-						return hours + ' hours and ' + minutes + ' minutes';
+						if (hours < 10) {
+							hours = '0' + hours;
+						}
+						if (minutes < 10) {
+							minutes = '0' + minutes;
+						}
+						return hours + ':' + minutes;
 					}
 
-					return '0 minutes';
+					return '00:00';
 				});
 
 				self.showPreview = ko.computed(function() {
 					return self.title() !== '';
+				});
+				
+				self.titleStyle = ko.computed(function() {
+					switch (self.title().toLowerCase()) {
+						case 'the green lantern':
+							return 'green';
+						default: 
+							return 'inherit';
+					}
 				});
 			}
 

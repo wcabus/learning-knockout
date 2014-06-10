@@ -7,45 +7,50 @@
 	<body>
 		<div class="container">
 			<h1>Learning Knockout</h1>
-			<table class="table table-hover table-striped">
-				<thead>
-					<tr>
-						<th>Title</th>
-						<th>Genre</th>
-						<th>Duration</th>
-						<th></th>
-					</tr>
-				</thead>
-				<tbody data-bind="foreach: movies">
-					<tr>
-						<td data-bind="text: title"></td>
-						<td data-bind="text: genre"></td>
-						<td data-bind="text: durationFormatted"></td>
-						<td><button class="btn btn-default" title="Edit" data-bind="click: edit"><i class="glyphicon glyphicon-pencil"></i></button></td>
-					</tr>
-				</tbody>
-			</table>
-			<div class="row">
-				<form>
+			<div data-bind=""><!-- TODO: hide this when editing -->
+				<button class="btn btn-primary" data-bind="click: add"><i class="glyphicon glyphicon-plus"></i> Add Movie</button>
+				<table class="table table-hover table-striped">
+					<thead>
+						<tr>
+							<th>Title</th>
+							<th>Genre</th>
+							<th>Duration</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody data-bind="foreach: movies">
+						<tr>
+							<td data-bind="text: title"></td>
+							<td data-bind="text: genre"></td>
+							<td data-bind="text: durationFormatted"></td>
+							<td><button class="btn btn-default" title="Edit" data-bind="click: edit"><i class="glyphicon glyphicon-pencil"></i></button></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="row" data-bind=""><!-- TODO: Only show this when editing -->
+				<form data-bind="with: editor">
 					<div class="form-horizontal">
 						<div class="form-group">
 							<label class="col-md-2 control-label">Movie Title</label>
-							<div class="col-md-5">
-								<input type="text" data-bind="value: title" />
+							<div class="col-md-6">
+								<input type="text" id="title" class="form-control" data-bind="value: title" />
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-md-2 control-label">Genre</label>
-							<div class="col-md-5">
-								<input type="text" data-bind="value: genre" />
+							<div class="col-md-6">
+								<input type="text" class="form-control" data-bind="value: genre" />
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-md-2 control-label">Duration</label>
-							<div class="col-md-5">
-								<input type="number" min="0" max="999" data-bind="value: duration" />
+							<div class="col-md-2">
+								<input type="number" class="form-control" min="0" max="999" data-bind="value: duration" />
 							</div>
 						</div>
+						<!-- TODO: clear the editor to return to the table -->
+						<button class="btn btn-primary" data-bind=""><i class="glyphicon glyphicon-floppy-disk"></i> Save</button>
 					</div>
 				</form>
 			</div>
@@ -71,18 +76,52 @@
 						return hours + ':' + minutes;
 					}
 
-					return '0 minutes';
+					return '00:00';
 				}, this);
 			}
-
+			
 			function ViewModel() {
 				var self = this;
 
 				this.movies = ko.observableArray();
-				this.editor = ko.observable(null);
+				this.editor = ko.observable(null); // <-- this will hold our editable movie object
+				
+				//TODO:
+				// showEditor: returns true if the edit view should be shown
+				// add: adds a new, empty Movie to the movies array
+				// edit: edits the current Movie
 			}
 
-			ko.applyBindings(new ViewModel());
+			/*
+			// Create a ViewModel instance and fire up Knockout.
+			var vm = new ViewModel();
+			ko.applyBindings(vm);
+
+			// Let's add some data to begin with
+			var movie = new Movie();
+			movie.title('Maleficent');
+			movie.genre('Action, adventure, family');
+			movie.duration(97);
+			vm.movies.push(movie);
+
+			movie = new Movie();
+			movie.title('X-Men: Days of Future Past');
+			movie.genre('Action, adventure, sci-fi');
+			movie.duration(131);
+			vm.movies.push(movie);
+
+			movie = new Movie();
+			movie.title('A Million Ways to Die in the West');
+			movie.genre('Comedy, western');
+			movie.duration(116);
+			vm.movies.push(movie);
+
+			movie = new Movie();
+			movie.title('Godzilla');
+			movie.genre('Action, sci-fi, thriller');
+			movie.duration(123);
+			vm.movies.push(movie);
+			*/
 		</script>
 	</body>
 </html>

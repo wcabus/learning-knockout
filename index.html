@@ -100,11 +100,11 @@
 				};
 			}
 
-
+			// Create a ViewModel instance and fire up Knockout.
 			var vm = new ViewModel();
 			ko.applyBindings(vm);
 
-			//Let's add some data to begin with
+			// Let's add some data to begin with
 			var movie = new Movie();
 			movie.title('Maleficent');
 			movie.genre('Action, adventure, family');

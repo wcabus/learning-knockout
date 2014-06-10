@@ -8,12 +8,19 @@
 		<div class="container">
 			<div class="row">
 				<h1>Learning Knockout</h1>
+				<div data-bind="visible: errors().length > 0">
+					<ul style="color: red" data-bind="foreach: errors">
+						<li data-bind="text: $data"></li>
+					</ul>
+				</div>
 				<form>
 					<div class="form-horizontal">
 						<div class="form-group">
 							<label class="col-md-2 control-label">Movie Title</label>
 							<div class="col-md-5">
 								<input class="form-control" data-bind="value: title" />
+							</div>
+							<div class="col-md-offset-2 col-md-5" style="color: red" data-bind="text: title.error">
 							</div>
 						</div>
 						<div class="form-group">
@@ -39,6 +46,9 @@
 				self.title = ko.observable('');
 				self.duration = ko.observable();
 
+				self.errors = ko.observableArray();
+				self.title.error = ko.observable();
+				
 				self.durationFormatted = ko.computed(function() {
 					if (self.duration()) {
 						var minutes = self.duration() % 60;
@@ -66,6 +76,17 @@
 							return 'green';
 						default: 
 							return 'inherit';
+					}
+				});
+				
+				self.title.subscribe(function(newValue) {
+					if (self.title() === '') {
+						self.errors.push('Please enter a title');
+						self.title.error('Please enter a title');
+					}
+					else {
+						self.errors.remove('Please enter a title');
+						self.title.error('');
 					}
 				});
 			}

@@ -13,61 +13,30 @@
 						<div class="form-group">
 							<label class="col-md-2 control-label">Movie Title</label>
 							<div class="col-md-5">
-								<input class="form-control" data-bind="value: title" />
+								<input class="form-control" />
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-md-2 control-label">Duration</label>
 							<div class="col-md-2">
-								<input class="form-control" type="number" min="0" max="999" data-bind="value: duration" />
+								<input class="form-control" type="number" min="0" max="999" />
 							</div>
 						</div>
 					</div>
 				</form>
 			</div>
-			<div class="row" data-bind="visible: showPreview">
+			<div class="row">
 				<h3>Preview</h3>
-				<h4 data-bind="text: title, style: { color: titleStyle }"></h4>
-				<strong>Duration: </strong><span data-bind="text: durationFormatted"></span>
+				<h4>Title Goes Here</h4>
+				<strong>Duration: </strong><span>And Duration Goes Here</span>
 			</div>
 		</div>
 		<script src="js/knockout.js"></script>
 		<script>
 			function ViewModel() {
 				var self = this;
-
-				self.title = ko.observable('');
-				self.duration = ko.observable();
-
-				self.durationFormatted = ko.computed(function() {
-					if (self.duration()) {
-						var minutes = self.duration() % 60;
-						var hours = (self.duration() - minutes) / 60;
-
-						if (hours < 10) {
-							hours = '0' + hours;
-						}
-						if (minutes < 10) {
-							minutes = '0' + minutes;
-						}
-						return hours + ':' + minutes;
-					}
-
-					return '00:00';
-				});
-
-				self.showPreview = ko.computed(function() {
-					return self.title() !== '';
-				});
 				
-				self.titleStyle = ko.computed(function() {
-					switch (self.title().toLowerCase()) {
-						case 'the green lantern':
-							return 'green';
-						default: 
-							return 'inherit';
-					}
-				});
+				
 			}
 
 			ko.applyBindings(new ViewModel());

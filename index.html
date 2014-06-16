@@ -71,12 +71,44 @@
 				});
 				
 				self.titleStyle = ko.computed(function() {
-					switch (self.title().toLowerCase()) {
-						case 'the green lantern':
-							return 'green';
-						default: 
-							return 'inherit';
+					var lowerTitle = self.title().toLowerCase();
+					if (lowerTitle.indexOf(' green ') != -1) {
+						return 'green';
 					}
+					
+					if (lowerTitle.indexOf(' red ') != -1) {
+						return 'red';
+					}
+					
+					if (lowerTitle.indexOf(' blue ') != -1) {
+						return 'blue';
+					}
+					
+					if (lowerTitle.indexOf(' white ') != -1) {
+						return '#d8d8d8';
+					}
+					
+					if (lowerTitle.indexOf(' yellow ') != -1) {
+						return 'yellow';
+					}
+					
+					if (lowerTitle.indexOf(' orange ') != -1) {
+						return 'orange';
+					}
+					
+					if (lowerTitle.indexOf(' purple ') != -1) {
+						return 'purple';
+					}
+					
+					if (lowerTitle.indexOf(' pink ') != -1) {
+						return 'pink';
+					}
+					
+					if (lowerTitle.indexOf(' brown ') != -1) {
+						return 'brown';
+					}
+					
+					return 'inherit';
 				});
 				
 				self.title.subscribe(function(newValue) {

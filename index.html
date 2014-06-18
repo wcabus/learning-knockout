@@ -7,7 +7,37 @@
 	<body>
 		<div class="container">
 			<div class="row">
-				
+				<p>
+					<!-- 
+						You can add the data-bind attribute on any HTML tag to bind a property of the viewmodel to that tag.
+						In this case, we bind firstName to the text property of a <span> tag.
+					-->
+					First name: <span data-bind="text: firstName"></span><br />
+					<!-- 
+						Or if you just want the result of the binding without having to use a DOM element,
+						you can also use a "virtual" element:
+					-->
+					Last name: <!-- ko text: lastName --><!-- /ko --><br /><br />
+					Full name: <!-- ko text: fullName --><!-- /ko -->
+				</p>
+				<p>
+					<!-- 
+						To enable editing, you can bind the value of input controls to a ko.observable object.
+					-->
+					First name: <input data-bind="value: firstName" /><br />
+					<!-- 
+						You can also influence when the observable's update mechanism is being triggered. By default, the 
+						"change" event is being used, but you can add another by using the valueUpdate binding.
+						Possible values:
+							- afterkeydown
+							- keyup
+							- keypress
+							- input
+							
+						For more information: http://knockoutjs.com/documentation/value-binding.html
+					-->
+					Last name: <input data-bind="value: lastName, valueUpdate: 'input'" />
+				</p>
 			</div>
 		</div>
 		<script src="js/knockout.js"></script>
@@ -15,7 +45,32 @@
 			function ViewModel() {
 				var self = this;
 
+				/*
+					One-shot binding:
+					
+					this.firstName = 'George';
+					this.lastName = 'Of The Jungle';
+				*/
 				
+				/*
+					Two-way binding:
+				*/
+				
+				this.firstName = ko.observable('George');
+				this.lastName = ko.observable('Of The Jungle');
+				
+				/*
+					Computed observable: can be read-write, but usually only used to return a value based on one or more observables.
+					When creating a computed observable, Knockout keeps track of all observables being referenced. That way,
+					Knockout can trigger an update when one of the observables has been changed.
+				*/
+				
+				this.fullName = ko.computed(function (){
+					//When accessing an observable in JavaScript, you'll need to call the observable as a function to retrieve its value.
+					//To change an observable's value: self.firstName('Test');
+					//Note: self is being used here, because "this" is no longer the ViewModel!
+					return self.firstName() + ' ' + self.lastName();
+				});
 			}
 
 			ko.applyBindings(new ViewModel());

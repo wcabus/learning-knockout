@@ -29,6 +29,12 @@
 				</table>
 			</div>
 			<div class="row" data-bind="visible: showEditor">
+				<!-- 
+					New binding: with
+					Changes the data context for that DOM element to the given bound element.
+				
+					Note: when that element (editor) is falsy, this will also hide that element. 
+				-->
 				<form data-bind="with: editor">
 					<div class="form-horizontal">
 						<div class="form-group">
@@ -49,7 +55,8 @@
 								<input type="number" class="form-control" min="0" max="999" data-bind="value: duration" />
 							</div>
 						</div>
-						<button class="btn btn-primary" data-bind="click: function () { $root.editor(null); }"><i class="glyphicon glyphicon-floppy-disk"></i> Save</button>
+						<button class="btn btn-primary" data-bind="click: $root.save"><i class="glyphicon glyphicon-floppy-disk"></i> Save</button>
+						<button class="btn" data-bind="click: $root.cancel">Cancel</button>
 					</div>
 				</form>
 			</div>
@@ -84,6 +91,7 @@
 
 				this.movies = ko.observableArray();
 				this.editor = ko.observable(null);
+				this.originalMovie = ko.observable(null); //to store the movie we're about to edit. 
 
 				this.showEditor = ko.computed(function() {
 					return self.editor() !== null;
@@ -96,7 +104,51 @@
 				};
 
 				this.edit = function(data) {
-					self.editor(data);
+					//Create a copy of the movie we're about to edit, so we can go back if the user cancels.
+					var movie = new Movie();
+					movie.title(data.title());
+					movie.genre(data.genre());
+					movie.duration(data.duration());
+					
+					//Remember the original movie, so we can save the changes
+					self.originalMovie(data);
+					//And set the editor to display the edit form.
+					self.editor(movie);
+				};
+				
+				this.save = function() {
+					if (self.originalMovie()) {
+						//We were editing, so let's change the data on originalMovie so we actually update the item from the movies array.
+						var movie = self.originalMovie();
+						var edited = self.editor();
+						
+						//Update the observables:
+						movie.title(edited.title());
+						movie.genre(edited.genre());
+						movie.duration(edited.duration());
+						
+						//And clear the originalMovie
+						self.originalMovie(null);
+					}
+				
+					//When adding, we already changed the correct item.
+					//All that is left to do in both edit and add modi: clear the editor to return to the table
+					self.editor(null);
+				};
+				
+				this.cancel = function() {
+					if (self.originalMovie()) {
+						//We were editing. Just clear the originalMovie observable
+						self.originalMovie(null);
+					}
+					else {
+						//We were adding and the new movie was already added to the movies array.
+						//So we have to remove that item again.
+						self.movies.remove(self.editor());
+					}
+					
+					//And clear the editor to hide the edit form.
+					self.editor(null);
 				};
 			}
 
@@ -104,7 +156,7 @@
 			var vm = new ViewModel();
 			ko.applyBindings(vm);
 
-			// Let's add some data to begin with
+			// Let's add some data to begin with: some box office data from Imdb.
 			var movie = new Movie();
 			movie.title('Maleficent');
 			movie.genre('Action, adventure, family');

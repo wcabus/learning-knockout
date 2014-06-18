@@ -8,10 +8,50 @@
 		<div class="container">
 			<div class="row">
 				<h1>Learning Knockout</h1>
+				<!-- 
+					New binding: visible
+					Controls if the HTML element is visible. When the binding evaluates to something 
+					falsy (null, undefined, 0, false, ...), Knockout sets the display CSS property to "none".
+					
+					I used a binding here to only show the error DIV when the array inside the errors observableArray 
+					contains one or more items. You can use JavaScript statements as a binding value, but I recommend
+					creating functions or computed observables: this often improves the readability of your views.
+				-->
 				<div data-bind="visible: errors().length > 0">
+					<!-- 
+						New binding: foreach
+						The foreach binding will repeat everything inside the HTML tag for each item inside the bound object/array.
+					-->
 					<ul style="color: red" data-bind="foreach: errors">
+						<!-- 
+						
+							Because each error is in fact a basic string object, I can't say something like:
+							data-bind="text: errorMessage"
+							
+							I need the data itself. Knockout provides this as the $data object.
+							Other special objects are:
+								- $root: the viewmodel itself that has been bound to this page using ko.applyBindings
+								- $parent: the immediate parent object at this moment in the data context.
+								- $parents: an array containing the parent hierarchy.
+								
+							There are more (and more explanation) defined here: http://knockoutjs.com/documentation/binding-context.html
+						
+						-->
 						<li data-bind="text: $data"></li>
 					</ul>
+					<!-- 
+					
+						You could also create the above piece of HTML like this:
+						
+						<ul style="color: red">
+							<!-- ko foreach: errors ->
+							<li data-bind="text: $data"></li>
+							<!-- /ko ->
+						</ul>
+					
+						Slight note: I removed one "-" at the end of each virtual element because it would break this comment
+						and try to run when displaying this page.
+					-->
 				</div>
 				<form>
 					<div class="form-horizontal">
@@ -20,6 +60,13 @@
 							<div class="col-md-5">
 								<input class="form-control" data-bind="value: title" />
 							</div>
+							<!--
+							
+								While the input element above is bound to the "title" observable, you can see
+								that the div element below is bound to the "title.error" observable. 
+								You can extend observables, which I did in this case to attach an error message to the title.
+							
+							-->
 							<div class="col-md-offset-2 col-md-5" style="color: red" data-bind="text: title.error">
 							</div>
 						</div>
@@ -34,6 +81,12 @@
 			</div>
 			<div class="row" data-bind="visible: showPreview">
 				<h3>Preview</h3>
+				<!-- 
+					New binding: style
+					
+					Used to bind CSS properties directly to the output of a property (or observable, computed, ...) of the viewmodel.
+					You can also use the "css" binding to add CSS classes to a tag.
+				-->
 				<h4 data-bind="text: title, style: { color: titleStyle }"></h4>
 				<strong>Duration: </strong><span data-bind="text: durationFormatted"></span>
 			</div>
@@ -111,6 +164,10 @@
 					return 'inherit';
 				});
 				
+				/*
+					You can "subscribe" to an observable, to be notified when that observable has been changed.
+					In this case, when the title changes, I want to check if the user has entered anything.
+				*/
 				self.title.subscribe(function(newValue) {
 					if (self.title() === '') {
 						self.errors.push('Please enter a title');

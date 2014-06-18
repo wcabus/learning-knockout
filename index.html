@@ -73,7 +73,11 @@
 				});
 			}
 
+			//This is where it all starts: applyBindings will bind a new instance of ViewModel to the entire DOM.
 			ko.applyBindings(new ViewModel());
+			
+			//There is an overload of this method to bind to a part of the DOM as well:
+			// ko.applyBindings(new ViewModel(), document.getElementById('a specific item in the DOM'));
 		</script>
 	</body>
 </html>
